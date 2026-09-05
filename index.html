@@ -22,7 +22,7 @@
     <meta property="og:locale" content="zh_CN" />
 
     <!-- 3. 分享图片 (微信最重要) -->
-    <meta property="og:image" content="https://i.imglt.com/20260901/1f924dc4ae6bc18f028e7374d8ce74ae.png" />
+    <meta property="og:image" content="https://i.imglt.com/20260901/ed0273734eca6a6a561ca508296c9259.jpg" />
     <meta property="og:image:secure_url" content="https://i.imglt.com/20260901/b35c2b03761c8575625f2837d69da05f.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -828,9 +828,316 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* ============================================================ */
+        /* 音乐播放器 · CSS 样式 (添加在现有样式末尾)                   */
+        /* ============================================================ */
+
+        /* ===== 音乐播放器 - 浮动按钮 ===== */
+        .music-player {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .music-player:hover {
+            transform: scale(1.06);
+        }
+
+        .music-player:active {
+            transform: scale(0.92);
+        }
+
+        /* ----- 主按钮 ----- */
+        .music-btn {
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #d4a373, #b8895a);
+            box-shadow:
+                0 4px 20px rgba(212, 163, 115, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25),
+                inset 0 -2px 6px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: background 0.4s ease, box-shadow 0.4s ease;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* 音符图标 */
+        .music-icon {
+            font-size: 26px;
+            color: #fff;
+            line-height: 1;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            transition: transform 0.3s ease;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* 状态文字 (播放/暂停) */
+        .music-status {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: 1px;
+            font-weight: 300;
+            margin-top: 0px;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease;
+            font-family: 'Noto Serif SC', 'PingFang SC', sans-serif;
+        }
+
+        /* ----- 播放状态：脉动光环 ----- */
+        .music-pulse {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border-radius: 50%;
+            border: 2px solid rgba(212, 163, 115, 0.25);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        /* 播放时显示光环并脉动 */
+        .music-player.playing .music-pulse {
+            opacity: 1;
+            animation: pulseRing 2s ease-out infinite;
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: scale(0.92);
+                opacity: 0.7;
+                border-color: rgba(212, 163, 115, 0.5);
+            }
+            50% {
+                transform: scale(1.18);
+                opacity: 0.3;
+                border-color: rgba(212, 163, 115, 0.15);
+            }
+            100% {
+                transform: scale(0.92);
+                opacity: 0.7;
+                border-color: rgba(212, 163, 115, 0.5);
+            }
+        }
+
+        /* ----- 播放状态：音符跳动 ----- */
+        .music-player.playing .music-icon {
+            animation: noteBounce 0.9s ease-in-out infinite alternate;
+        }
+
+        @keyframes noteBounce {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                transform: translateY(-4px) scale(1.06);
+            }
+        }
+
+        /* ----- 暂停状态：静态 ----- */
+        .music-player.paused .music-icon {
+            animation: none;
+            transform: scale(1);
+        }
+
+        .music-player.paused .music-pulse {
+            opacity: 0;
+            animation: none;
+        }
+
+        /* ----- 加载状态 (可选) ----- */
+        .music-player.loading .music-icon {
+            animation: spin 1s linear infinite;
+            font-size: 22px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== 响应式适配 ===== */
+        @media (max-width: 640px) {
+            .music-player {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .music-btn {
+                width: 54px;
+                height: 54px;
+            }
+
+            .music-icon {
+                font-size: 22px;
+            }
+
+            .music-status {
+                font-size: 9px;
+            }
+
+            .music-pulse {
+                top: -4px;
+                left: -4px;
+                right: -4px;
+                bottom: -4px;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .music-player {
+                bottom: 14px;
+                right: 14px;
+            }
+
+            .music-btn {
+                width: 48px;
+                height: 48px;
+            }
+
+            .music-icon {
+                font-size: 19px;
+            }
+
+            .music-status {
+                font-size: 8px;
+                margin-top: -2px;
+            }
+        }
+
+        /* 暗色适配 - 如果页面有暗色模式，可保留此段 */
+        @media (prefers-color-scheme: dark) {
+            .music-btn {
+                background: linear-gradient(145deg, #c9956a, #a8784a);
+                box-shadow: 0 4px 24px rgba(180, 120, 80, 0.3);
+            }
+            .music-pulse {
+                border-color: rgba(200, 150, 120, 0.3);
+            }
+        }
+
+        /* ===== 点击进入覆盖层 ===== */
+        .entry-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: linear-gradient(145deg, #fdf6f0, #f0d5d0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            padding: 30px;
+        }
+
+        .entry-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .entry-content {
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .entry-icon {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            animation: pulseHeart 2s ease-in-out infinite;
+        }
+
+        .entry-title {
+            font-family: var(--font-script);
+            font-size: 2.6rem;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .entry-sub {
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            color: var(--text-soft);
+            letter-spacing: 3px;
+            margin-bottom: 30px;
+        }
+
+        .entry-btn {
+            display: inline-block;
+            padding: 14px 48px;
+            background: linear-gradient(145deg, #d4a373, #b8895a);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 3px;
+            cursor: pointer;
+            box-shadow: 0 6px 24px rgba(212, 163, 115, 0.35);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-family: var(--font-body);
+        }
+
+        .entry-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 8px 32px rgba(212, 163, 115, 0.5);
+        }
+
+        .entry-btn:active {
+            transform: scale(0.96);
+        }
+
+        .entry-hint {
+            margin-top: 18px;
+            font-size: 0.8rem;
+            color: var(--text-soft);
+            opacity: 0.5;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 640px) {
+            .entry-title {
+                font-size: 2rem;
+            }
+            .entry-btn {
+                padding: 12px 32px;
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <!-- ============================================================ -->
+    <!-- 点击进入覆盖层 (位于最顶层)                                   -->
+    <!-- ============================================================ -->
+    <div class="entry-overlay" id="entryOverlay">
+        <div class="entry-content">
+            <div class="entry-icon">💍</div>
+            <h2 class="entry-title">扈晓东 &amp; 袁云洁</h2>
+            <p class="entry-sub">诚邀您见证我们的幸福时刻</p>
+            <button class="entry-btn" id="entryBtn">🎵 点击见证</button>
+
+        </div>
+    </div>
 
     <!-- ===== 加载动画 ===== -->
     <div class="page-loader" id="pageLoader">
@@ -864,7 +1171,7 @@
             </h1>
             <p class="hero-title">—— 诚 挚 邀 请 ——</p>
             <div class="hero-date">
-                📅 <span>2026.10.01</span> &nbsp;·&nbsp; 中午 11:00
+                📅 <span>2026.10.01</span> &nbsp;·&nbsp; 中午 11:28
             </div>
         </div>
 
@@ -917,24 +1224,24 @@
                 <div class="detail-card reveal reveal-delay-2">
                     <span class="icon">⏰</span>
                     <div class="label">时 间</div>
-                    <div class="value chinese">中午 11:00</div>
+                    <div class="value chinese">中午 11:28</div>
                     <div style="font-size:0.85rem;color:var(--text-soft);opacity:0.6;margin-top:2px;">仪式开始</div>
                 </div>
 
                 <div class="detail-card full reveal reveal-delay-3">
-    			<span class="icon">📍</span>
-    			<div class="label">地 点</div>
-    			<div class="value chinese">君霸主题婚宴厅</div>
-   			 <div class="address-line">衡水市武邑县衡水胜康中医院东北侧80米</div>
-    				<!-- ⬇️ 新增导航按钮 -->
-    			<div style="margin-top:14px;">
-       				 <a href="https://uri.amap.com/search?keyword=君霸主题婚宴厅&city=衡水市" 
-          			 target="_blank" 
-          			 style="display:inline-block;padding:8px 32px;background:var(--primary);color:#fff;border-radius:40px;text-decoration:none;font-size:0.95rem;letter-spacing:1.5px;box-shadow:0 4px 12px rgba(212,163,115,0.3);transition:background 0.3s;">
-           			🧭 高德导航
-     				  </a>
-   			 </div>
-		</div>
+                    <span class="icon">📍</span>
+                    <div class="label">地 点</div>
+                    <div class="value chinese">君霸主题婚宴厅</div>
+                    <div class="address-line">衡水市武邑县衡水胜康中医院东北侧80米</div>
+                    <!-- ⬇️ 新增导航按钮 -->
+                    <div style="margin-top:14px;">
+                        <a href="https://uri.amap.com/search?keyword=君霸主题婚宴厅&city=衡水市" 
+                           target="_blank" 
+                           style="display:inline-block;padding:8px 32px;background:var(--primary);color:#fff;border-radius:40px;text-decoration:none;font-size:0.95rem;letter-spacing:1.5px;box-shadow:0 4px 12px rgba(212,163,115,0.3);transition:background 0.3s;">
+                            🧭 高德导航
+                        </a>
+                    </div>
+                </div>
 
                 <div class="detail-card full reveal reveal-delay-4" style="grid-column:1/-1;background:rgba(255,255,255,0.4);border-style:dashed;border-color:rgba(212,163,115,0.3);">
                     <span style="font-size:1.3rem;letter-spacing:2px;">💐 期待与您共度美好时光 💐</span>
@@ -1014,7 +1321,6 @@
         </div>
     </section>
 
-
     <!-- ============================================================ -->
     <!-- ===== 底部 ===== -->
     <!-- ============================================================ -->
@@ -1037,6 +1343,18 @@
     </footer>
 
     <!-- ============================================================ -->
+    <!-- 音乐播放器 · HTML 结构 (放在 footer 之后)                    -->
+    <!-- ============================================================ -->
+    <div class="music-player" id="musicPlayer" role="button" aria-label="播放/暂停背景音乐" tabindex="0">
+        <div class="music-btn">
+            <span class="music-icon">♫</span>
+            <span class="music-status" id="musicStatus">播放音乐</span>
+        </div>
+        <!-- 脉动光环 -->
+        <div class="music-pulse"></div>
+    </div>
+
+    <!-- ============================================================ -->
     <!-- ===== JavaScript ===== -->
     <!-- ============================================================ -->
     <script>
@@ -1054,9 +1372,9 @@
             });
 
             // =============================================
-            // 2. 倒计时 (2026年10月1日 11:00)
+            // 2. 倒计时 (2026年10月1日 11:28)
             // =============================================
-            const WEDDING_DATE = new Date('2026-10-01T11:00:00+08:00').getTime();
+            const WEDDING_DATE = new Date('2026-10-01T11:28:00+08:00').getTime();
 
             function updateCountdown() {
                 const now = Date.now();
@@ -1125,6 +1443,254 @@
             // =============================================
             console.log('%c💍 扈晓东 ❤️ 袁云洁 💍', 'font-size:24px; font-weight:bold; color:#d4a373;');
             console.log('%c感谢您来参加我们的婚礼！', 'font-size:14px; color:#5a4a3a;');
+
+            // ============================================================ */
+            // 音乐播放器 · JavaScript 逻辑 (增强自动播放 + 覆盖层控制)  */
+            // ============================================================ */
+
+            (function() {
+                'use strict';
+
+                // =============================================
+                // 1. 配置
+                // =============================================
+
+                const MUSIC_URL = 'https://mp3tourl.com/audio/1788616274915-ea787be7-bc87-475e-8053-4c65dddf6c99.mp3';
+                const VOLUME = 0.6;
+
+                // =============================================
+                // 2. DOM 引用
+                // =============================================
+
+                const player = document.getElementById('musicPlayer');
+                const statusText = document.getElementById('musicStatus');
+                const overlay = document.getElementById('entryOverlay');
+                const entryBtn = document.getElementById('entryBtn');
+
+                // =============================================
+                // 3. 创建音频实例
+                // =============================================
+
+                const audio = new Audio(MUSIC_URL);
+                audio.volume = VOLUME;
+                audio.loop = true;
+                audio.preload = 'auto';
+
+                // =============================================
+                // 4. 状态管理
+                // =============================================
+
+                let isPlaying = false;
+                let isLoaded = false;
+                let isLoading = false;
+                let hasTriedAutoPlay = false;
+
+                // =============================================
+                // 5. UI 更新函数
+                // =============================================
+
+                function updateUI(playing) {
+                    if (playing) {
+                        player.classList.remove('paused');
+                        player.classList.add('playing');
+                        statusText.textContent = '暂停音乐';
+                        player.setAttribute('aria-label', '暂停背景音乐');
+                    } else {
+                        player.classList.remove('playing');
+                        player.classList.add('paused');
+                        statusText.textContent = '播放音乐';
+                        player.setAttribute('aria-label', '播放背景音乐');
+                    }
+                }
+
+                function setLoading(loading) {
+                    if (loading) {
+                        player.classList.add('loading');
+                    } else {
+                        player.classList.remove('loading');
+                    }
+                }
+
+                // =============================================
+                // 6. 核心控制函数 (暴露给覆盖层使用)
+                // =============================================
+
+                function togglePlay() {
+                    if (isLoading) return;
+
+                    if (isPlaying) {
+                        audio.pause();
+                        isPlaying = false;
+                        updateUI(false);
+                    } else {
+                        if (!isLoaded) {
+                            setLoading(true);
+                            audio.load();
+                        }
+                        audio.play()
+                            .then(() => {
+                                isPlaying = true;
+                                isLoaded = true;
+                                setLoading(false);
+                                updateUI(true);
+                            })
+                            .catch((err) => {
+                                setLoading(false);
+                                console.warn('🎵 音乐播放被阻止或加载失败:', err.message);
+                                if (err.name === 'NotAllowedError') {
+                                    statusText.textContent = '点击播放';
+                                    player.style.opacity = '0.7';
+                                    setTimeout(() => {
+                                        player.style.opacity = '1';
+                                    }, 400);
+                                } else {
+                                    statusText.textContent = '加载失败';
+                                    setTimeout(() => {
+                                        if (!isPlaying) {
+                                            statusText.textContent = '播放音乐';
+                                        }
+                                    }, 2000);
+                                }
+                                isPlaying = false;
+                                updateUI(false);
+                            });
+                    }
+                }
+
+                // =============================================
+                // 7. 覆盖层控制
+                // =============================================
+
+                function enterSite() {
+                    overlay.classList.add('hidden');
+                    // 延迟播放，让淡出动画更流畅
+                    setTimeout(function() {
+                        if (!isPlaying) {
+                            togglePlay();
+                        }
+                    }, 350);
+                }
+
+                entryBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    enterSite();
+                });
+
+                entryBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        enterSite();
+                    }
+                });
+
+                // =============================================
+                // 8. 自动播放尝试 (增强)
+                // =============================================
+
+                function tryAutoPlay() {
+                    if (hasTriedAutoPlay) return;
+                    hasTriedAutoPlay = true;
+                    if (!isPlaying) {
+                        togglePlay();
+                    }
+                }
+
+                window.addEventListener('load', function() {
+                    tryAutoPlay();
+                    setTimeout(function() {
+                        if (!isPlaying) {
+                            tryAutoPlay();
+                        }
+                    }, 1000);
+                });
+
+                // 监听用户手势，如果覆盖层未消失，点击会触发覆盖层按钮，不会走到这里
+                // 但如果覆盖层因故消失，点击页面也可触发播放
+                const resumeOnInteraction = function(e) {
+                    if (isPlaying) {
+                        document.removeEventListener('click', resumeOnInteraction);
+                        document.removeEventListener('touchstart', resumeOnInteraction);
+                        document.removeEventListener('keydown', resumeOnInteraction);
+                        return;
+                    }
+                    // 只当覆盖层隐藏后才响应全局点击播放（避免干扰）
+                    if (overlay.classList.contains('hidden')) {
+                        tryAutoPlay();
+                        if (isPlaying) {
+                            document.removeEventListener('click', resumeOnInteraction);
+                            document.removeEventListener('touchstart', resumeOnInteraction);
+                            document.removeEventListener('keydown', resumeOnInteraction);
+                        }
+                    }
+                };
+
+                document.addEventListener('click', resumeOnInteraction);
+                document.addEventListener('touchstart', resumeOnInteraction);
+                document.addEventListener('keydown', resumeOnInteraction);
+
+                // =============================================
+                // 9. 播放器按钮事件
+                // =============================================
+
+                player.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    togglePlay();
+                });
+
+                player.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        togglePlay();
+                    }
+                });
+
+                // =============================================
+                // 10. 音频事件
+                // =============================================
+
+                audio.addEventListener('canplaythrough', function() {
+                    isLoaded = true;
+                    setLoading(false);
+                    if (isPlaying) {
+                        audio.play().catch(() => {});
+                    }
+                });
+
+                audio.addEventListener('error', function(e) {
+                    setLoading(false);
+                    console.warn('🎵 音乐加载失败，请检查 URL 是否有效:', MUSIC_URL);
+                    statusText.textContent = '加载失败';
+                    setTimeout(() => {
+                        if (!isPlaying) {
+                            statusText.textContent = '播放音乐';
+                        }
+                    }, 2500);
+                });
+
+                audio.addEventListener('ended', function() {
+                    if (audio.loop) {
+                        audio.play().catch(() => {});
+                    } else {
+                        isPlaying = false;
+                        updateUI(false);
+                    }
+                });
+
+                // =============================================
+                // 11. 初始状态
+                // =============================================
+
+                updateUI(false);
+                audio.load();
+
+                console.log('🎵 音乐播放器已加载 (覆盖层+增强自动播放)');
+                console.log('📌 音乐文件:', MUSIC_URL);
+                console.log('💡 提示: 点击覆盖层按钮或页面任意处播放音乐');
+
+                // 暴露 togglePlay 供覆盖层脚本调用
+                window.togglePlay = togglePlay;
+
+            })();
 
         })();
     </script>
